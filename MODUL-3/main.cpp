@@ -4,7 +4,6 @@ using namespace std;
 int main (){
     int key, shift, baris, baris_dek;
     int panjang2 = 0, kolom = 4, indeks1 = 0, indeks2 = 0, panjang2_dek = 0;
-    bool loop1 = false, loop2 = false;
     char teks[1000];
     char matriks[100][100];
 
@@ -221,12 +220,12 @@ int main (){
             cout << "Verifikasi Teks Lain? (y/n): ";
             cin.get(ulang);
             cin.ignore(1000, '\n');
-            if (ulang != 'y' && ulang != 'n') {
+            if (ulang != 'y'|| ulang != 'Y' && ulang != 'n'|| ulang != 'N') {
                 cout << "   [!] Input tidak valid. Masukkan y atau n.\n";
             }
         } while (ulang != 'y' && ulang != 'n');
  
-        if (ulang == 'y') cout << "\n";
+        if (ulang == 'y' || 'Y') cout << "\n";
  
     } while (ulang == 'y');
  
@@ -247,12 +246,13 @@ int main (){
     cout << "Masukan ukuran Matrix (min 3, max 5) : ";
     cin >> matrix;
    
-    while (matrix < 3 || matrix > 5) {
-        cout << "[!]  Input  tidak valid. Masukan  ukuran antara 3 sampai 5.\n";
-        cout  << "Masukan Ukuran Matrix (min 3, max 5): ";
-        cin >> matrix;  
+    while (matrix < 3 || matrix > 5 || !(cin)) {
+        cin.clear();
+        cin.ignore(1000, '\n');
+        cout << "[!] Input tidak valid. Masukan ukuran antara 3 sampai 5.\n";
+        cout << "Masukan Ukuran Matrix (min 3, max 5): ";
+        cin >> matrix;
     }
-    
     cout << "--------------------------------------------\n";
     cout << "Odd Coordinate Matrix (Ganjil): \n";
     int angka_ganjil = 1;
@@ -345,6 +345,8 @@ int main (){
             }
         }
         cout << "\n";
+
+        
     }
     cout << "\n--------------------------------------------\n";
     cout << ">> [TASK 3/3] COMPLETE - Navigation matrix aligned.\n";
