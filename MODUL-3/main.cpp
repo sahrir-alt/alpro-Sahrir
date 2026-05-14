@@ -66,14 +66,11 @@ int main (){
 
     cout << "\nEnkripsi sebelum ditambah key: " << enskripsi_sebelum << "\n";
     cout << "Enkripsi setelah ditambah key: ";
-
     for (int i = 0; i < indeks2; i++) {
         char enskripsi_setelah = enskripsi_sebelum[i] + key;
         cout << enskripsi_setelah;
     }
     cout << "\n\n";
-
-    // DEKRIPSI 
     cout << "[ DEKRIPSI ]\n\n";
 
     char teks_terenkripsi[1000];
@@ -93,7 +90,6 @@ int main (){
     baris_dek = (panjang2_dek + kolom - 1) / kolom; 
 
     cout << "Dekripsi setelah dikurang key : ";
-
     char shift_balik[1000];
     for (int i = 0; i < panjang2_dek; i++) {
         shift_balik[i] = teks_terenkripsi[i] - key;
@@ -114,7 +110,6 @@ int main (){
         }
     }
     cout << "\nMatriks Dekripsi:\n\n";
-     
     for (int i = 0; i < baris_dek; i++) {
         for (int j = 0; j < kolom; j++) {
             cout << matriks_dek[i][j] << " ";
@@ -122,7 +117,6 @@ int main (){
         cout << "\n";
     }
     cout << "\nHasil Dekripsi final           : ";
-    
     for (int i = 0; i < baris_dek; i++) {
         for (int j = 0; j < kolom; j++) {
             if (matriks_dek[i][j] != '_') {
@@ -163,7 +157,6 @@ int main (){
                     tanpa_spasi[indeks3++] = inputan[i];
                 }
             }
-            cout << "Masukan kalimat ke-" << kalimat << "      : ";
             tanpa_spasi[indeks3] = '\0';
             panjang2 = indeks3;
             cout << "Hasil untuk Kalimat ke-" << kalimat << ":\n";
@@ -224,9 +217,7 @@ int main (){
                 cout << "   [!] Input tidak valid. Masukkan y atau n.\n";
             }
         } while (ulang != 'y' && ulang != 'n');
- 
         if (ulang == 'y' || 'Y') cout << "\n";
- 
     } while (ulang == 'y');
  
     cout << "\n>> [TASK 2/3] COMPLETE - Text console back online.\n";
