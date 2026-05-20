@@ -430,7 +430,7 @@ void lihat_barang(string nama_barang[], int stok_barang[], float harga_barang[],
             cout << "Stok Barang  : " << stok_barang[i] << "\n";
             cout << "Harga/Stok   : Rp " << harga_barang[i] << "\n";
             cout << "Total Harga  : Rp " << total_harga << "\n";
-            cout << "--------------------------------\n";
+            cout << "\n";
         }
         cout << "\nTotal barang : " << total << " jenis\n";
     }
