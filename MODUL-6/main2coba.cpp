@@ -16,7 +16,7 @@ struct Inti {
     char *buffer;
     int batas_buffer;
     int kursor;
-    Entri thread[MAKS_ENTRI];
+    Entri *thread[MAKS_ENTRI];
 };
 
 int next_index = 0;
@@ -125,25 +125,28 @@ void inisialisasi_inti(Inti &inti, int batas) {
     inti.batas_buffer = batas;
     inti.kursor = 0;
     for (int i = 0; i < MAKS_ENTRI; i++) {
-        inti.thread[i].posisi_awal = 0;
-        inti.thread[i].panjang = 0;
-        inti.thread[i].tipe = 0;
-        inti.thread[i].aktif = false;
+        inti.thread[i] = nullptr;
     }
 }
 
 void hapus_inti(Inti &inti) {
     delete[] inti.buffer;
     inti.buffer = nullptr;
+    for (int i = 0; i < MAKS_ENTRI; i++) {
+        if (inti.thread[i] != nullptr) {
+            delete inti.thread[i];
+            inti.thread[i] = nullptr;
+        }
+    }
 }
 
 void perbarui_kursor(Inti &inti) {
     int ujung = 0;
     for (int i = 0; i < MAKS_ENTRI; i++) {
-        if (inti.thread[i].aktif == false) {
+        if (inti.thread[i] == nullptr || inti.thread[i]->aktif == false) {
             continue;
         }
-        int batas_entri = inti.thread[i].posisi_awal + inti.thread[i].panjang;
+        int batas_entri = inti.thread[i]->posisi_awal + inti.thread[i]->panjang;
         if (batas_entri > ujung) {
             ujung = batas_entri;
         }
@@ -209,13 +212,13 @@ void tampilkan_peta(Inti &inti) {
     cout << "============================================================\n";
     bool ada_data = false;
     for (int i = 0; i < next_index; i++) {
-        if (inti.thread[i].aktif == false) {
+        if (inti.thread[i] == nullptr || inti.thread[i]->aktif == false) {
             continue;
         }
         ada_data = true;
-        int posisi = inti.thread[i].posisi_awal;
-        int panjang = inti.thread[i].panjang;
-        int tipe = inti.thread[i].tipe;
+        int posisi = inti.thread[i]->posisi_awal;
+        int panjang = inti.thread[i]->panjang;
+        int tipe = inti.thread[i]->tipe;
         cout << "[" << i << "] TIPE: ";
         if (tipe == 0) {
             cout << "Willpower Pulse | OFFSET: " << posisi << " | ALAMAT: " << (void *)(inti.buffer + posisi) << " | DATA: \"";
@@ -269,12 +272,16 @@ void suntik_thread(Inti &inti) {
         for (int j = 0; j < kebutuhan; j++) {
             inti.buffer[inti.kursor + j] = buf[j];
         }
+        
         int i = next_index;
         next_index++;
-        inti.thread[i].posisi_awal = inti.kursor;
-        inti.thread[i].panjang = kebutuhan;
-        inti.thread[i].tipe = 0;
-        inti.thread[i].aktif = true;
+        
+        inti.thread[i] = new Entri;
+        inti.thread[i]->posisi_awal = inti.kursor;
+        inti.thread[i]->panjang = kebutuhan;
+        inti.thread[i]->tipe = 0;
+        inti.thread[i]->aktif = true;
+        
         inti.kursor += kebutuhan;
         cout << "Perintah CyroN: \"Resistansi subjek terdeteksi. Mengesampingkan umpan balik.\"\n";
 
@@ -295,17 +302,21 @@ void suntik_thread(Inti &inti) {
         int energi = str_ke_int(buf_energi);
         int kebutuhan = 4;
         if (inti.kursor + kebutuhan > inti.batas_buffer) {
-            cout << "!! ERROR !! Buffer penuh, tidak bisa menambah data!\n";
+            cout << "!! ERROR OPTIMALISASI !! Burnout neural terdeteksi!\n";
             tunggu_enter();
             return;
         }
         tulis_int(inti.buffer, inti.kursor, energi);
+        
         int i = next_index;
         next_index++;
-        inti.thread[i].posisi_awal = inti.kursor;
-        inti.thread[i].panjang = kebutuhan;
-        inti.thread[i].tipe = 1;
-        inti.thread[i].aktif = true;
+        
+        inti.thread[i] = new Entri;
+        inti.thread[i]->posisi_awal = inti.kursor;
+        inti.thread[i]->panjang = kebutuhan;
+        inti.thread[i]->tipe = 1;
+        inti.thread[i]->aktif = true;
+        
         inti.kursor += kebutuhan;
         cout << "Daiki: \"(Keheningan. Angin telah dijinakkan.)\"\n";
     }
@@ -315,7 +326,7 @@ void suntik_thread(Inti &inti) {
 void hapus_link(Inti &inti) {
     bool ada_aktif = false;
     for (int i = 0; i < next_index; i++) {
-        if (inti.thread[i].aktif == true) {
+        if (inti.thread[i] != nullptr && inti.thread[i]->aktif == true) {
             ada_aktif = true;
             break;
         }
@@ -334,29 +345,30 @@ void hapus_link(Inti &inti) {
         return;
     }
     int idx = str_ke_int(buf_idx);
-    if (idx < 0 || idx >= next_index) {
+    if (idx < 0 || idx >= next_index || inti.thread[idx] == nullptr) {
         cout << "Indeks link tidak valid atau sudah dihapus sebelumnya.\n";
         tunggu_enter();
         return;
     }
-    if (inti.thread[idx].aktif == false) {
+    if (inti.thread[idx]->aktif == false) {
         cout << "!! ERROR !! Indeks sudah dihapus atau kosong!\n";
         tunggu_enter();
         return;
     }
-    int ujung = inti.thread[idx].posisi_awal + inti.thread[idx].panjang;
+    
+    int ujung = inti.thread[idx]->posisi_awal + inti.thread[idx]->panjang;
     bool ada_setelah = false;
     for (int i = 0; i < next_index; i++) {
-        if (i == idx) {
+        if (i == idx || inti.thread[i] == nullptr) {
             continue;
         }
-        if (inti.thread[i].aktif == true &&
-            inti.thread[i].posisi_awal >= ujung) {
+        if (inti.thread[i]->aktif == true && inti.thread[i]->posisi_awal >= ujung) {
             ada_setelah = true;
             break;
         }
     }
-    inti.thread[idx].aktif = false;
+    
+    inti.thread[idx]->aktif = false;
     cout << "Link " << idx << " berhasil dihapus.\n";
     if (ada_setelah == false) {
         perbarui_kursor(inti);
@@ -406,7 +418,7 @@ int main(int argc, char const *argv[]) {
         return 1;
     }
     if (argc > 2) {
-        cout << "Error: Terlalu banyak argumen.\n";
+        cout << "Error: Terlahu banyak argumen.\n";
         return 1;
     }
     const char *nim = argv[1];
@@ -445,6 +457,7 @@ int main(int argc, char const *argv[]) {
             tunggu_enter();
         }
     } while (pilihan != 0);
+    
     hapus_inti(inti);
     return 0;
 }
