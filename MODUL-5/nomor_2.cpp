@@ -1,5 +1,4 @@
 #include <iostream>
-#include <cstdlib> 
 using namespace std;
 
 struct Karakter {
@@ -33,6 +32,18 @@ void clear_screen() {
 void press_enter() {
     cout << "Press ENTER to continue...";
     cin.get();
+}
+
+int baca_int_aman() {
+    int nilai;
+    cin >> nilai;
+    if (cin.fail()) {
+        cin.clear();
+        cin.ignore(1000, '\n');
+        return -999;
+    }
+    cin.ignore(1000, '\n');
+    return nilai;
 }
 
 void inisialisasi_game() {
@@ -156,9 +167,12 @@ void simulasi_pertarungan(int idx_stage, int idx_musuh) {
         cout << "| 4. Run Away       (Exit game)                                         |" << endl;
         cout << "+=======================================================================+" << endl;
         cout << "[Choose action]: ";
-        int aksi;
-        cin >> aksi;
-        cin.ignore(1000, '\n');
+        int aksi = baca_int_aman();
+        if (aksi == -999) {
+            cout << "\n[Sistem]: Input tidak valid. Masukkan angka 1-4.\n";
+            press_enter();
+            continue;
+        }
         cout << endl;
 
         int damage_diberikan = 0;
@@ -193,9 +207,7 @@ void simulasi_pertarungan(int idx_stage, int idx_musuh) {
         else if (aksi == 4) {
             exit(0);
         }
-
         cout << "\n-----------------------------------------------------------------------" << endl;
-
         if (dunia_abyss[idx_stage].daftar_musuh[idx_musuh].hp <= 0) {
             cout << "| " << dunia_abyss[idx_stage].daftar_musuh[idx_musuh].nama << " has been defeated!" << endl;
             cout << "| EXP gained: " << dunia_abyss[idx_stage].daftar_musuh[idx_musuh].exp_beri << endl;
@@ -212,7 +224,7 @@ void simulasi_pertarungan(int idx_stage, int idx_musuh) {
                 proses_level_up();
             }
         } else {
-            int acak_dodge = rand() % 100; 
+            int acak_dodge = turn_counter * 17 % 100;
             if (acak_dodge < player.agi) {
                 cout << "[" << dunia_abyss[idx_stage].daftar_musuh[idx_musuh].nama << "] attacked, but " << player.nama << " dodges!" << endl;
             } else {
@@ -247,9 +259,12 @@ void masuk_stage_dosa(int idx) {
     cout << "+=======================================================================+" << endl;
     cout << "[Which path will you take?]: ";
     
-    int pil_musuh;
-    cin >> pil_musuh;
-    cin.ignore(1000, '\n');
+    int pil_musuh = baca_int_aman();
+    if (pil_musuh == -999) {
+        cout << "\n[Sistem]: Input tidak valid. Masukkan angka 1-5.\n";
+        press_enter();
+        return;
+    }
     
     if (pil_musuh >= 1 && pil_musuh <= 4) {
         if (dunia_abyss[idx].daftar_musuh[pil_musuh - 1].hp <= 0) {
@@ -294,7 +309,6 @@ void layar_tamat() {
 }
 
 int main() {
-    srand(777);
     inisialisasi_game();
     clear_screen();
     banner();
@@ -313,17 +327,14 @@ int main() {
                 break;
             }
         }
-
         if (semua_tamat) {
             layar_tamat();
             break;
         }
-
         clear_screen();
         banner();
         cout << "|                 THE 7 DEADLY SINS ARE WAITING FOR YOU                 |" << endl;
         cout << "+=======================================================================+" << endl;
-        
         for (int i = 0; i < 7; i++) {
             cout << "                               " << (i + 1) << ". " << dunia_abyss[i].nama_dosa;
             if (dunia_abyss[i].boss_kalah) {
@@ -336,11 +347,13 @@ int main() {
         cout << "|               The deeper you go, the stronger they are                |" << endl;
         cout << "+=======================================================================+" << endl;
         cout << "[Choose your desired stage]: ";
-        
-        int pilihan_stage;
-        cin >> pilihan_stage;
-        cin.ignore(1000, '\n');
-        
+    
+        int pilihan_stage = baca_int_aman();
+        if (pilihan_stage == -999) {
+            cout << "\n[Sistem]: Input tidak valid. Masukkan angka 1-8.\n";
+            press_enter();
+            continue;
+        }
         if (pilihan_stage >= 1 && pilihan_stage <= 7) {
             masuk_stage_dosa(pilihan_stage - 1); 
         } else if (pilihan_stage == 8) {
