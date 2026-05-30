@@ -43,7 +43,7 @@ string nama_author       = "";
 int id_commit_global     = 1;
 
 void clear_screen() {
-    system("cls");
+    cout << "\033[2J\033[H";
 }
 
 void tekan_enter() {
@@ -473,6 +473,7 @@ int main(int argc, char* argv[]) {
         cout << COLOR_GREEN << "> " << COLOR_RESET;
         cin >> pilihan;
         cin.clear();
+        cin.ignore();
         switch (pilihan) {
             case 1: git_commit();   break;
             case 2: git_log();      break;
