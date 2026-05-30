@@ -72,20 +72,20 @@ string ambil_waktu() {
 }
 
 Repository* buat_repo(const string& nama) {
-    Repository* repo    = new Repository;
-    repo->nama          = nama;
+    Repository* repo = new Repository;
+    repo->nama = nama;
     repo->jumlah_branch = 1;
-    repo->total_commit  = 0;
-    repo->next          = nullptr;
+    repo->total_commit = 0;
+    repo->next = nullptr;
 
-    Branch* branch_utama        = new Branch;
-    branch_utama->nama          = "main";
-    branch_utama->head          = nullptr;
+    Branch* branch_utama = new Branch;
+    branch_utama->nama = "main";
+    branch_utama->head = nullptr;
     branch_utama->jumlah_commit = 0;
-    branch_utama->next          = nullptr;
+    branch_utama->next = nullptr;
 
     repo->daftar_branch = branch_utama;
-    repo->branch_aktif  = branch_utama;
+    repo->branch_aktif = branch_utama;
 
     return repo;
 }
@@ -132,18 +132,15 @@ Branch* cari_branch(Repository* repo, const string& nama) {
 
 Commit* salin_commit(Commit* src) {
     if (!src) return nullptr;
-
     int jumlah = 0;
     Commit* tmp = src;
     while (tmp) { jumlah++; tmp = tmp->next; }
-
     Commit** arr = new Commit*[jumlah];
     tmp = src;
     for (int i = 0; i < jumlah; i++) {
         arr[i] = tmp;
         tmp = tmp->next;
     }
-
     Commit* head_baru = nullptr;
     Commit* prev      = nullptr;
     for (int i = 0; i < jumlah; i++) {
@@ -231,7 +228,6 @@ void git_commit() {
     cout << COLOR_GREEN << nama_branch << COLOR_RESET << " -> " << COLOR_GREEN << "origin/" << nama_branch << COLOR_RESET << "\n";
     cout << "$ git push origin " << COLOR_GREEN << nama_branch << COLOR_RESET << "\n";
     cout << COLOR_GRAY << "----------------------------------------" << COLOR_RESET << "\n";
-
     tekan_enter();
 }
 
@@ -256,7 +252,6 @@ void git_log() {
             c = c->next;
         }
     }
-
     cout << COLOR_GRAY << "\n----------------------------------------" << COLOR_RESET << "\n";
     tekan_enter();
 }
@@ -295,12 +290,11 @@ void git_branch() {
         tekan_enter();
         return;
     }
-
-    Branch* nb        = new Branch;
-    nb->nama          = nama_baru;
-    nb->head          = salin_commit(repo_aktif->branch_aktif->head);
+    Branch* nb = new Branch;
+    nb->nama = nama_baru;
+    nb->head = salin_commit(repo_aktif->branch_aktif->head);
     nb->jumlah_commit = repo_aktif->branch_aktif->jumlah_commit;
-    nb->next          = nullptr;
+    nb->next = nullptr;
 
     Branch* terakhir = repo_aktif->daftar_branch;
     while (terakhir->next) terakhir = terakhir->next;
@@ -355,12 +349,10 @@ void repo_baru() {
     cout << COLOR_GRAY << "----------------------------------------" << COLOR_RESET << "\n";
     cout << "git init (new repository)\n";
     cout << COLOR_GRAY << "----------------------------------------" << COLOR_RESET << "\n";
-
     cout << COLOR_CYAN << "New repository name: " << COLOR_RESET;
     string nama;
     cin.ignore();
     getline(cin, nama);
-
     if (nama.empty()) {
         nama = "repo-" + to_string(jumlah_repo + 1);
         Repository* repo = buat_repo(nama);
@@ -371,13 +363,11 @@ void repo_baru() {
         tekan_enter();
         return;
     }
-
     if (nama_repo_ada(nama)) {
         cout << COLOR_RED << "[ERROR] Repository '" << nama << "' already exists!\n" << COLOR_RESET;
         tekan_enter();
         return;
     }
-
     Repository* repo = buat_repo(nama);
     tambah_repo(repo);
     repo_aktif = repo;
